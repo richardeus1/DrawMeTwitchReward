@@ -24,9 +24,6 @@ Category: Website Integration
 
 Copy your Client ID and Client Secret
 
-node server.js
-
-
 Once you have everything setup, from terminal, go where is located server.js and run: node server.js
 
 The viewer will need to claim the Twitch "Draw me" reward and then in a web browser navigate to yourwebpagewhereisthisprojectlocated:3000 
