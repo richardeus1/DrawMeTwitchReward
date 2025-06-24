@@ -52,7 +52,7 @@ server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 const CLIENT_ID = process.env.TWITCH_CLIENT_ID;
 const CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET;
 const REDIRECT_URI = 'https://YOURWEBPAGE.COM:3000/auth/twitch/callback'; //PUT THE ROOT OF YOUR WEBPAGE AND KEEP :3000/auth/twitch/callback
-const CHANNEL_ID = ''; // Your Twitch user ID (not name)
+//const CHANNEL_ID = ''; // Your Twitch user ID (not name)
 
 app.use(session({ secret: 'drawsecret', resave: false, saveUninitialized: true }));
 app.use(express.static('public'));
@@ -91,7 +91,7 @@ app.get('/auth/twitch/callback', async (req, res) => {
         
         // Prevent duplicate users
         const alreadyLogged = loggedInUsers.find(u => u.id === user.id);
-        if (!alreadyLogged && loggedInUsers.length >= 200) {
+        if (!alreadyLogged && loggedInUsers.length >= 2) {
           return res.send('❌ Limit reached: Solo se admite 1 usuario conectado.');
         }
 
