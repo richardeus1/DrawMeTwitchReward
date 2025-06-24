@@ -8,7 +8,9 @@ can use this Youtube video as reference on how to do it (I used this video) http
 Now, on your server you will need to install some dependencies. Just run through terminal in the server:
 
 npm init -y
+
 npm install express socket.io
+
 node server.js
 
 
