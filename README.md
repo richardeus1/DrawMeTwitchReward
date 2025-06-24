@@ -9,7 +9,7 @@ Now, on your server you will need to install some dependencies. Just run through
 
 npm init -y
 
-npm install express socket.io
+npm install express socket.io axios express-session dotenv
 
 node server.js
 
