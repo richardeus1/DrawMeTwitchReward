@@ -24,20 +24,6 @@ Category: Website Integration
 
 Copy your Client ID and Client Secret, and then paste those values in process.env file
 
-Get your Twitch Channel ID from:
-
-https://api.twitch.tv/helix/users?login=yourchannelname
-
-using your Client-ID and OAuth token.
-
-Get an App Access Token
-
-Use your client ID + secret:
-
-curl -X POST "https://id.twitch.tv/oauth2/token?client_id=YOUR_CLIENT_ID&client_secret=YOUR_CLIENT_SECRET&grant_type=client_credentials"
-
-Save the returned token.
-
 Once you have everything setup, from terminal, go where is located server.js and run: node server.js
 
 The viewer will need to claim the Twitch "Draw me" reward and then in a web browser navigate to yourwebpagewhereisthisprojectlocated:3000 
