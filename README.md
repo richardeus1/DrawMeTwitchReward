@@ -24,6 +24,9 @@ Category: Website Integration
 
 Copy your Client ID and Client Secret, and then paste those values in process.env file
 
+in file server.js you will need to modify //PUT THE LOCATION OF THE PRIVKEY OF YOUR SSL
+  cert: fs.readFileSync('/etc/letsencrypt/live/YOURWEBPAGEPATHFORSSLCERT/fullchain.pem') //PUT THE LOCATION OF THE FULLCHAIN OF YOUR SSL
+
 Once you have everything setup, from terminal, go where is located server.js and run: node server.js
 
 The viewer will need to claim the Twitch "Draw me" reward and then in a web browser navigate to yourwebpagewhereisthisprojectlocated:3000 
