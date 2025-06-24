@@ -11,6 +11,19 @@ npm init -y
 
 npm install express socket.io axios express-session dotenv
 
+
+Then Create a Twitch Developer App
+
+Go to: https://dev.twitch.tv/console/apps
+
+Name: anything
+
+OAuth Redirect URL: http://localhost:3000/auth/twitch/callback (or your domain)
+
+Category: Website Integration
+
+Copy your Client ID and Client Secret
+
 node server.js
 
 
