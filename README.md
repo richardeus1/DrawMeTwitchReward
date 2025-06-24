@@ -52,6 +52,8 @@ METHOD    PUT
 
 DATA     {"userName": "%userName%"}
 
+For Working Directory, usually that's the path, check your path if also located Streamer.bot in C:\
+
 Once you have everything setup, from terminal in your web server, go where is located server.js and run: node server.js
 
 Also remember to keep open in the machine where you stream while streaming, obs, Lioranboard and Streamer.bot
