@@ -32,7 +32,29 @@ in file server.js you will need to modify:
 
   const REDIRECT_URI = 'https://YOURWEBPAGE.COM:3000/auth/twitch/callback'; //PUT THE ROOT OF YOUR WEBPAGE AND KEEP :3000/auth/twitch/callback
 
-Once you have everything setup, from terminal, go where is located server.js and run: node server.js
+  NOW; on streamer.bot you will need to create an action as channel reward, where the trigger is the twitch channel redemption related with DrawMe Twitch reward.
+  Then, add a subaction as "Run a Program" with the following parameters:
+  
+  Target: node
+
+  Working Directory: C:\Streamer.bot\data\scripts
+
+  Arguments: fetch.js
+  
+  Wait maximum: 1 seconds for exit
+
+  Environment variables:
+Name      Value
+
+URL       https://yourdomain:3000/authorize
+
+METHOD    PUT
+
+DATA     {"userName": "%userName%"}
+
+Once you have everything setup, from terminal in your web server, go where is located server.js and run: node server.js
+
+Also remember to keep open in the machine where you stream while streaming, obs, Lioranboard and Streamer.bot
 
 The viewer will need to claim the Twitch "Draw me" reward and then in a web browser navigate to yourwebpagewhereisthisprojectlocated:3000 
 
