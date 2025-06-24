@@ -22,7 +22,7 @@ OAuth Redirect URL: http://localhost:3000/auth/twitch/callback (or your domain)
 
 Category: Website Integration
 
-Copy your Client ID and Client Secret
+Copy your Client ID and Client Secret, and then paste those values in process.env file
 
 Once you have everything setup, from terminal, go where is located server.js and run: node server.js
 
