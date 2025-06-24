@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Twitch Drawing</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      cursor: crosshair;
+    }
+
+    #toolbar {
+      position: fixed;
+      top: 15px;
+      left: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 10px;
+      border-radius: 10px;
+      z-index: 10;
+      font-family: sans-serif;
+    }
+
+    #toolbar > * {
+      margin: 5px;
+    }
+
+    #auth-warning {
+      position: absolute;
+      top: 20px;
+      left: 113px;
+      background-color: red;
+      color: white;
+      padding: 8px;
+      z-index: 1000;
+      font-family: sans-serif;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="toolbar">
+    <label>Color: <input type="color" id="colorPicker" value="#ff0000"></label>
+    <label>Size: <input type="range" id="sizePicker" min="1" max="20" value="5"></label>
+    <button id="undoBtn">Deshacer</button>
+  </div>
+
+  <canvas id="canvas"></canvas>
+
+  <script>
+
+
+    // Auto logout after 3 minutes
+    setTimeout(() => {
+      fetch('/logout', { method: 'GET' })
+      .then(() => {
+        console.log("Session expired after 3 minutes. Logging out.");
+        window.location.href = '/logout'; // Optional: force re-login
+        })
+        .catch(err => {
+          console.error("Logout after timeout failed:", err);
+        });
+      }, 190000); // 3 minutes
+  </script>
+
+
+
+
+
+
+  <div id="authStatus">Checking authentication...</div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const colorPicker = document.getElementById('colorPicker');
+    const sizePicker = document.getElementById('sizePicker');
+    const undoBtn = document.getElementById('undoBtn');
+
+    let drawing = false;
+    let isEraser = false;
+    let history = [];
+
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+
+    canvas.addEventListener('mousedown', () => drawing = true);
+    canvas.addEventListener('mouseup', () => drawing = false);
+    canvas.addEventListener('mouseout', () => drawing = false);
+    canvas.addEventListener('mousemove', draw);
+
+    function draw(e) {
+      if (!drawing) return;
+
+      const x = e.clientX;
+      const y = e.clientY;
+      const size = parseInt(sizePicker.value);
+      const color = isEraser ? "#ffffff" : colorPicker.value;
+
+      const point = { x, y, size, color };
+      history.push(point);
+      drawPoint(point);
+      socket.emit('draw', point);
+    }
+
+    function drawPoint({ x, y, size, color }) {
+      ctx.fillStyle = color;
+      ctx.beginPath();
+      ctx.arc(x, y, size, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    socket.on('draw', (point) => {
+      drawPoint(point);
+      history.push(point);
+    });
+
+    socket.on('syncHistory', (newHistory) => {
+      history = newHistory;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let point of history) {
+        drawPoint(point);
+      }
+    });
+
+    undoBtn.onclick = () => {
+      if (history.length === 0) return;
+      history.pop();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (let point of history) {
+        drawPoint(point);
+      }
+      socket.emit('syncHistory', history);
+    };
+
+    window.addEventListener('resize', () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+    });
+
+    function disableDrawing() {
+      canvas.style.pointerEvents = 'none';
+      undoBtn.disabled = true;
+      colorPicker.disabled = true;
+      sizePicker.disabled = true;
+    }
+
+    function enableDrawing() {
+      canvas.style.pointerEvents = 'auto';
+      undoBtn.disabled = false;
+      colorPicker.disabled = false;
+      sizePicker.disabled = false;
+    }
+
+    function showOverlayWarning(msg) {
+      const banner = document.getElementById("auth-warning") || document.createElement("div");
+      banner.id = "auth-warning";
+      banner.innerText = msg;
+      document.body.appendChild(banner);
+    }
+
+    async function canDraw(userName) {
+      try {
+        const res = await fetch('/logged-in');
+        const data = await res.json();
+        return Array.isArray(data.users) && data.users.includes(userName);
+      } catch (err) {
+        console.error("Error checking draw permissions:", err);
+        return false;
+      }
+    }
+
+    async function checkAuthAndPermission() {
+      try {
+        const res = await fetch('/auth/status');
+        const data = await res.json();
+
+        if (!data.authenticated || !data.user || !data.user.login) {
+          document.getElementById('authStatus').innerHTML = `<a href="/auth/twitch">Login with Twitch</a>`;
+          disableDrawing();
+          showOverlayWarning("Not logged in. Please authenticate.");
+          return;
+        }
+
+        const userName = data.user.login;
+        const isAllowed = await canDraw(userName);
+
+        if (isAllowed) {
+          enableDrawing();
+          document.getElementById('authStatus').innerText = "¡Ya puedes dibujar!";
+        } else {
+          disableDrawing();
+          document.getElementById('authStatus').innerText = "No tienes permiso para dibujar.";
+          showOverlayWarning("No autorizado para dibujar.");
+        }
+      } catch (err) {
+        console.error("Auth check failed:", err);
+        disableDrawing();
+        showOverlayWarning("Error al verificar permisos.");
+      }
+    }
+
+    // Initial check
+    checkAuthAndPermission();
+
+    // Re-check every 5 seconds
+    setInterval(checkAuthAndPermission, 5000);
+
+
+
+  </script>
+</body>
+</html>
