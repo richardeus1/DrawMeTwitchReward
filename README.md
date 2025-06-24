@@ -3,7 +3,14 @@ This is a fun project for Twitch streamers. This is a reward where viewers can d
 
 First, you will need to create the reward on Twitch, then you will need to setup the action to put an overlay to draw in your stream, this overlay on your stream is where viewers will draw. 
 In my case, to handle this I use OBS and Lioranboard. Since this is only to share the code, I am not going to explain how to handle change scene, or adding overlay with OBS and Lioranboard, but you 
-can use this Youtube as reference on how to do it (I used this video) https://www.youtube.com/watch?v=yNQHXqCJYtQ&list=WL&index=87
+can use this Youtube video as reference on how to do it (I used this video) https://www.youtube.com/watch?v=yNQHXqCJYtQ&list=WL&index=87
+
+Now, on your server you will need to install some dependencies. Just run through terminal in the server:
+
+npm init -y
+npm install express socket.io
+node server.js
+
 
 Once you have everything setup, from terminal, go where is located server.js and run: node server.js
 
